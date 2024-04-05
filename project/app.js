@@ -7,15 +7,19 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
+const bcrypt = require("bcrypt");
+const passport = require("passport");
+const LocalStartegy = require("passport-local");
+const User = require("./models/User");
 
-const indexRouter = require("./routes/index");
-const usersRouter = require("./routes/users");
+const userRouter = require("./routes/userRouter");
+const messageRouter = require("./routes/MessageRoter");
 
 const app = express();
 
 // view engine setup
-app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -47,9 +51,42 @@ app.use(
   })
 );
 
+app.use("/", userRouter);
+app.use("/user", userRouter);
+app.use("/msg", messageRouter);
 
-app.use("/", indexRouter);
-app.use("/users", usersRouter);
+passport.use(
+  new LocalStartegy((username, password, done) => {
+    User.findOne({ username: username }, async (err, user) => {
+      if (err) {
+        done(err);
+      }
+      if (!user) {
+        done(null, false, { msg: "Incorrect Username!" });
+      }
+      try {
+        const res = await bcrypt.compare(password, user.password);
+        if (res) {
+          return done(null, user);
+        } else {
+          return done(null, false, { msg: "Wrong Password!" });
+        }
+      } catch (error) {
+        done(err);
+      }
+    });
+  })
+);
+
+passport.serializeUser((user,done)=>{
+  done(null,user.id);
+});
+
+passport.deserializeUser((id,done)=>{
+  User.findById(id,(err,user)=>{
+    done(err,user);
+  })
+});
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
