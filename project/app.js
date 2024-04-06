@@ -56,36 +56,32 @@ app.use("/user", userRouter);
 app.use("/msg", messageRouter);
 
 passport.use(
-  new LocalStartegy((username, password, done) => {
-    User.findOne({ username: username }, async (err, user) => {
-      if (err) {
-        done(err);
-      }
+  new LocalStartegy(async (username, password, done) => {
+    try {
+      const user = await User.findOne({ username: username });
       if (!user) {
-        done(null, false, { msg: "Incorrect Username!" });
+        return done(null, false, { msg: "Incorrect Username" });
       }
-      try {
-        const res = await bcrypt.compare(password, user.password);
-        if (res) {
-          return done(null, user);
-        } else {
-          return done(null, false, { msg: "Wrong Password!" });
-        }
-      } catch (error) {
-        done(err);
+      const res = await bcrypt.compare(password, user.password);
+      if (res) {
+        return done(null, user);
+      } else {
+        return done(null, false, { msg: "Wrong Password!" });
       }
-    });
+    } catch (error) {
+      done(err);
+    }
   })
 );
 
-passport.serializeUser((user,done)=>{
-  done(null,user.id);
+passport.serializeUser((user, done) => {
+  done(null, user.id);
 });
 
-passport.deserializeUser((id,done)=>{
-  User.findById(id,(err,user)=>{
-    done(err,user);
-  })
+passport.deserializeUser((id, done) => {
+  User.findById(id, (err, user) => {
+    done(err, user);
+  });
 });
 
 // catch 404 and forward to error handler
