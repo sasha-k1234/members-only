@@ -15,12 +15,12 @@ exports.validateReg = [
 
   function (req, res, next) {
     const errors = validationResult(req);
-    
+
     if (!errors.isEmpty()) {
       const err = errors.array();
       err.message = "Validation Error!";
       return next(err);
     }
-    next();
+     next();
   },
 ];
