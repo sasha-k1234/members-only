@@ -6,6 +6,8 @@ const {isAuth,isMember,isAdmin} = require('../utils/middleware');
 
 MsgRouter.get('/write',isAuth,isMember,message.getNew);
 
+
+
 MsgRouter.post('/write',isAuth,isMember,message.postNew);
 
 MsgRouter.get('/board',isAuth,isMember,message.msgBoard);
