@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Board</title>
+</head>
+
+<body>
+    <h1>Welcome to the Message Board: <%= currentUser.username %></h1>
+<% if(!currentUser) { %>
+    <div><p>First Login to view this page</p></div>
+<% } else if(currentUser.role === 'member'||currentUser.role === 'admin') { %>
+    <div>Messages:</div>
+    <% for(let i = 0; i < messages.length; i++) { %>
+        <div>
+            <h4>
+                <%= messages[i].title %>
+            </h4>
+            <% if(currentUser.role === 'admin') { %>
+            <div>
+                Author: <%= messages[i].author.username %>
+            </div>
+            <br />
+            <div>
+                Date: <%= messages[i].post_date.toUTCString() %>
+            </div>
+            <br />
+            <% } %>
+            <div>
+                Content: <%= messages[i].content %>
+            </div>
+            <br />
+            <% if(currentUser.role === 'admin')  { %>
+            <form method="post" action="/msg/board/<%= messages[i]._id%>">
+                <button type="submit">Delete</button>
+            </form>
+            <hr/>
+            <% } %>
+        </div>
+    <% } %>
+<% } %>
+
+</body>
+</html>
