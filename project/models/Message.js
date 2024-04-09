@@ -4,6 +4,7 @@ const {DateTime} = require('luxon');
 
 const MsgSchema = new Schema({
     title:{type:String,required:true},
+    content:{type:String,required:true},
     post_date:{type:Date,required:true},
     author:{
         type:Schema.Types.ObjectId,ref:"User"
