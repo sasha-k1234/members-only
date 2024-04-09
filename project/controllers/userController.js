@@ -61,7 +61,7 @@ exports.postMember = async (req, res) => {
     req.flash("success", "You are now a member!");
   } else {
     user.role = "admin";
-    req.flash("You are now a admin!");
+    req.flash("success","You are now a admin!");
   }
   
   await User.findByIdAndUpdate(id, user);
