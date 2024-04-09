@@ -34,6 +34,7 @@ exports.msgBoard = async (req, res, next) => {
   }
 };
 
+
 exports.delMsg = async (req, res, next) => {
   try {
     const id = req.params.id;
