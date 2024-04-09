@@ -5,6 +5,7 @@ exports.isAuth = (req,res,next) => {
      res.redirect('/user/login');
 };
 
+
 exports.isMember = (req,res,next) => {
     if (req.user.role === 'user') {
         return res.redirect('/user/member');
