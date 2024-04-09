@@ -6,13 +6,15 @@
     <title>members page</title>
 </head>
 <body>
-    <h1> Hello <% user%> </h1>
-    <br/>
+    <%- include('./flash') %>
+    <h1> Hello  </h1>
     <p>Here you can join our club, but first enter the passphrase</p>
     <br/>
-    <input type="text" placeholder="Make a guess!" name="passcode"/>
+    <form method="post" action="/user/member">
+    <input type="text" placeholder="Make a guess!" name="passcode" id="passcode"/>
     <br/>
     <input type="submit" value="Submit Guess"/>
+    </form>
     <br/>
     <br/>
     <a href="/user/logout">Logout</a>

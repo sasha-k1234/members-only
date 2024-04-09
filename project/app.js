@@ -11,6 +11,7 @@ const bcrypt = require("bcrypt");
 const passport = require("passport");
 const LocalStartegy = require("passport-local");
 const User = require("./models/User");
+const flash = require("connect-flash");
 
 const userRouter = require("./routes/userRouter");
 const messageRouter = require("./routes/MessageRoter");
@@ -51,9 +52,7 @@ app.use(
   })
 );
 
-app.use("/", userRouter);
-app.use("/user", userRouter);
-app.use("/msg", messageRouter);
+app.use(flash());
 
 passport.use(
   new LocalStartegy(async (username, password, done) => {
@@ -69,7 +68,7 @@ passport.use(
         return done(null, false, { msg: "Wrong Password!" });
       }
     } catch (error) {
-      done(err);
+      done(error);
     }
   })
 );
@@ -79,18 +78,33 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((id, done) => {
-  User.findById(id, (err, user) => {
-    done(err, user);
+  User.findById(id)
+  .then((user) => {
+    done(null, user);
+  })
+  .catch((err) => {
+    done(err, null);
   });
 });
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use((req,res,next)=>{
+  res.locals.currentUser = req.user;
+  res.locals.success = req.flash('success');
+  res.locals.error = req.flash('error');
+  next();
+});
+
+app.use("/", userRouter);
+app.use("/user", userRouter);
+app.use("/msg", messageRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
 });
-
-app.use(passport.initialize());
-app.use(passport.session());
 
 // error handler
 app.use(function (err, req, res, next) {
