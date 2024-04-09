@@ -63,6 +63,7 @@ exports.postMember = async (req, res) => {
     user.role = "admin";
     req.flash("You are now a admin!");
   }
+  
   await User.findByIdAndUpdate(id, user);
   res.redirect('/msg/write');
 };
